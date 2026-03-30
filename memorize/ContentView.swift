@@ -2,47 +2,95 @@
 //  ContentView.swift
 //  memorize
 //
-//  Created by William on 2026/3/16.
+//  Created by Ken Hsieh on 2026/3/16.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+    var emojis = ["A", "B", "C","D", "E", "F", "G", "H", "I", "j", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+    
+    @State var emojiCount = 20
+    
     var body: some View {
-        HStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(lineWidth: 3)
-                Text("34567890-")
-                    .foregroundStyle(.blue)
-            }
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(lineWidth: 3)
-                Text("34567890-")
-                    .foregroundStyle(.blue)
+        VStack {
+            cardList
+            Spacer()
+            actionButton
+        }
+        .padding()
+        .foregroundStyle(.orange)
+    }
+    
+    var cardList: some View {
+        ScrollView{
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 85), spacing: 0)], spacing: 0){
+                ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                    CardView(content: emoji)
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .padding(4)
+                }
             }
         }
-            .padding()
-            .foregroundStyle(.orange)
-            
-
-        .padding()
+    }
+    
+    
+    var actionButton: some View{
+        HStack {
+            remove
+            Spacer()
+            add
+        }
+        
+    }
+    
+    var remove: some View {
+        Button {
+            if emojiCount > 1 {
+                emojiCount -= 1
+            }
+        } label: {
+            Image(systemName: "minus.circle")
+        }
+    }
+    
+    var add: some View {
+        Button {
+            if emojiCount < emojis.count {
+                emojiCount += 1
+            }
+        } label: {
+            Image(systemName: "plus.circle")
+        }
     }
 }
 
-struct CarView: View {
+struct CardView: View {
+    @State var isFaceUp: Bool = true
+    var content: String
     var body: some View {
         ZStack {
-            
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(lineWidth: 3)
-            Text("34567890-")
-                .foregroundStyle(.blue)
+            let shape = RoundedRectangle(cornerRadius: 20)
+            if isFaceUp {
+                shape.fill(.white)
+                shape.strokeBorder(lineWidth: 3)
+                Text(content).font(Font.system(size: 300))
+                    .minimumScaleFactor(0.01)
+                    .aspectRatio(contentMode: .fit)
+            }
+            else {
+                shape
+            }
+        }
+        .onTapGesture {
+            isFaceUp = !isFaceUp
         }
     }
 }
+
+
 
 #Preview {
     ContentView()
+    
 }
